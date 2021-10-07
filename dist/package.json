@@ -1,0 +1,29 @@
+{
+  "name": "lambdademofgarcia",
+  "version": "1.0.0",
+  "description": "lambda demo fgarcia apirest",
+  "main": "index.js",
+  "scripts": {
+    "createS3Bucket": "aws s3api create-bucket --bucket $AWS_BUCKET_NAME --region $AWS_REGION",
+    "uploadAPISpec": "aws s3 cp conf/api-spec/api-fgarcia-spec.yaml s3://$AWS_BUCKET_NAME/api-spec/api-fgarcia-spec.yaml",
+    "postbuild": "(cp package.json dist/package.json && cd dist && npm install --only=production)",
+    "clean": "rimraf dist",
+    "build": "npm run clean && tsc",
+    "pack": "npm run uploadAPISpec && npm run-script build && cd conf/infra && sam package --s3-bucket $AWS_BUCKET_NAME --s3-prefix package --template-file main-fgarcia.yaml --output-template-file main-fgarcia-pack.yaml",
+    "deploy": "sam deploy --template-file conf/infra/main-fgarcia-pack.yaml --stack-name lambdademo-fgarcia-stack --region $AWS_REGION --capabilities CAPABILITY_IAM CAPABILITY_AUTO_EXPAND CAPABILITY_NAMED_IAM"
+  },
+  "author": "fgarcia",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/aws-lambda": "8.10.83",
+    "@types/mongoose": "5.11.97",
+    "@types/typescript": "2.0.0",
+    "rimraf": "3.0.2",
+    "typescript": "4.3.5"
+  },
+  "dependencies": {
+    "aws-sdk": "2.976.0",
+    "dotenv": "10.0.0",
+    "mongoose": "6.0.2"
+  }
+}
