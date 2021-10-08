@@ -23,3 +23,19 @@ export async function getUserById(event: APIGatewayProxyEvent, context: Context)
     };
     return responseId;
 }
+
+export async function createUser(event: APIGatewayProxyEvent, context: Context): Promise<APIGatewayProxyResult>{
+
+    context.callbackWaitsForEmptyEventLoop = false;
+    await startConnection(); 
+    const user = JSON.parse(event.body!);
+    const creation = await model.create(user);
+       
+    let responseId:APIGatewayProxyResult = {
+        statusCode: 200,
+        body: JSON.stringify(creation)
+    };
+    return responseId;
+
+}
+
